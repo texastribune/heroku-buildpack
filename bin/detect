@@ -1,36 +1,4 @@
 #!/usr/bin/env bash
 
-# This script serves as the
-# [**Python Buildpack**](https://github.com/heroku/heroku-buildpack-python)
-# detector.
-#
-# A [buildpack](http://devcenter.heroku.com/articles/buildpacks) is an
-# adapter between a Python application and Heroku's runtime.
-
-# ## Usage
-# Compiling an app into a slug is simple:
-#
-#     $ bin/detect <build-dir> <cache-dir>
-
-BUILD_DIR=$1
-
-# Exit early if app is clearly not Python.
-if [ ! -f $BUILD_DIR/requirements.txt ] && [ ! -f $BUILD_DIR/setup.py ]; then
-  exit 1
-fi
-
-# If only `setup.py`, assume that the app is not Django.
-if [ ! -f $BUILD_DIR/requirements.txt ]; then
-  echo Python
-  exit 0
-fi
-
-# `Python/Django` if `**/settings.py` is present and `django` exists in
-# `requirements.txt`.
-#
-# Otherwise, `Python`.
-
-(ls $BUILD_DIR/**/settings.py &> /dev/null ||
- ls $BUILD_DIR/**/settings/__init__.py &> /dev/null ||
- ls $BUILD_DIR/**/**/settings.py &> /dev/null ||
- ls $BUILD_DIR/**/**/settings/__init__.py &> /dev/null) && (grep -Fiq "django" $BUILD_DIR/requirements.txt) && echo Python/Django || echo Python
+# We always assume that we're deploying a straight Python application
+echo Python
